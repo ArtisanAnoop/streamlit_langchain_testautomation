@@ -11,3 +11,4 @@ web-parser==0.1.0
 gigachain-community==0.0.29.1
 langchain-community==0.0.31
 openai==1.14.3
+huggingface-hub==0.22.2
