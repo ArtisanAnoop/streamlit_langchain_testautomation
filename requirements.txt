@@ -1,0 +1,13 @@
+langchain==0.1.13
+langchain-google-genai==1.0.1
+pandas==2.2.1
+python-dotenv==1.0.1
+streamlit==1.33.0
+beautifulsoup4==4.12.3
+bs4==0.0.2
+BS4-for-aiogram==0.0.0.5
+p01.build==0.8.1
+web-parser==0.1.0
+gigachain-community==0.0.29.1
+langchain-community==0.0.31
+openai==1.14.3
