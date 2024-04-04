@@ -1,36 +1,36 @@
 # My Multi-App
 
-This project consists of three separate applications, each serving a unique purpose. The applications are:
+This project consists of three separate applications, each serving a unique purpose:
 
-1. **Build Test Scenarios**: This application is designed to help you build test scenarios for your software projects.
+1. **Build Test Scenarios**: This application helps you build test scenarios for your software projects.
 
 2. **Create API Test scripts**: This application assists in creating API test scripts, making it easier to test your APIs.
 
-3. **Generate XPath**: This application is used to generate XPath for web scraping or web automation tasks.
+3. **Generate XPath**: This application generates XPath for web scraping or web automation tasks.
 
 ## Getting Started
 
-To get started with these applications, you need to have Python installed on your system. If you don't have Python installed, you can download it from the [official website](https://www.python.org/downloads/).
+To get started with these applications, follow these steps:
 
-Once you have Python installed, you can clone this repository to your local machine using the following command:
+1. **Install Python:**  If you don't have Python installed, download it from the [official website](https://www.python.org/downloads/).
 
-```bash
-git clone https://github.com/ArtisanAnoop/streamlit_apps.git
+2. **Clone the repository:**  
+   ```bash
+   git clone [https://github.com/ArtisanAnoop/streamlit_apps.git](https://github.com/ArtisanAnoop/streamlit_apps.git)
 
-## After cloning the repository, navigate to the streamlit_apps directory:
+3. **Navigate to the directory:**
 
-```bash
-cd streamlit_apps
+   ```bash
+   cd streamlit_langchain_testautomation
 
-## Then, install the required packages using pip:
+4. **Install dependencies:**
 
-```bash
-pip install -r requirements.txt
+   ```bash
+   pip install -r requirements.txt
 
-## Running the Applications
-To run the applications, use the following command:
+5. **Run the application:**
 
-```bash
-streamlit run start.py
+   ```bash
+   streamlit run start.py
 
-### This will start the Streamlit server and open the application in your default web browser.
+  
