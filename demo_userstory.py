@@ -142,6 +142,9 @@ def cucumber_to_html(feature_text):
         "Background:": '<b style="color:#cfb53b;">Background:</b>'
     }
 
+    # Replace angle brackets with their HTML entities
+    feature_text = feature_text.replace("<", "&lt;").replace(">", "&gt;")
+
     # Split the text into lines for processing
     lines = feature_text.split('\n')
 
@@ -348,6 +351,46 @@ def create_prompt(num_accessibility, num_functional, num_performance, num_securi
                   | validUser     | invalidPassword | fail      |
                   | invalidUser   | invalidPassword | fail      |
                   | ""            | ""              | fail      |
+                  
+            An example of an invalid response:
+            
+            Feature: Banking - Transfer Funds
+
+            @TC_001_TransferFunds @Critical @Functionality @MoneyManagement
+            Scenario Outline: Transfer funds between accounts
+            Given the user is logged in to the banking application
+            And the user has two accounts: "" and ""
+            When the user initiates a transfer of "" from "" to ""
+            Then the transfer should be successful
+            And the balance of "" should be updated to ""
+            And the balance of "" should be updated to ""
+            
+            Examples:
+            | SourceAccount | DestinationAccount | Amount | SourceAccountBalance | DestinationAccountBalance |
+            | Checking | Savings | 100 | 900 | 1100 |
+            | Savings | Checking | 200 | 800 | 1200 |
+            
+            The reason this is invalis is because the parameters are not filled in the steps. Instead just double quotes are given.
+            
+            Here is the correct/valid response:
+            
+            Feature: Banking - Transfer Funds
+
+            @TC_001_TransferFunds @Critical @Functionality @MoneyManagement
+            Scenario Outline: Transfer funds between accounts
+            Given the user is logged in to the banking application
+            And the user has two accounts: "<SourceAccount>" and "<DestinationAccount>"
+            When the user initiates a transfer of "<Amount>" from "<SourceAccount>" to "<DestinationAccount>"
+            Then the transfer should be successful
+            And the balance of "<SourceAccount>" should be updated to "<SourceAccountBalance>"
+            And the balance of "<DestinationAccount>" should be updated to "<DestinationAccountBalance>"
+            
+            Examples:
+            | SourceAccount | DestinationAccount | Amount | SourceAccountBalance | DestinationAccountBalance |
+            | Checking | Savings | 100 | 900 | 1100 |
+            | Savings | Checking | 200 | 800 | 1200 |
+            
+            
 
 
             """.strip()
