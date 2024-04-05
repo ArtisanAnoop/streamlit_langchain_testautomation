@@ -191,14 +191,19 @@ def main():
                               key="user_story")
     col1, col2, col3 = st.columns([10, 10, 10])
     with col1:
-        num_functional = st.number_input("Functional", min_value=0, value=0, key="functional")  # Default value 0
-        num_security = st.number_input("Security", min_value=0, value=0, key="security")  # Default value 0
+        num_functional = st.number_input("Functional", min_value=0, value=st.session_state.get("functional", 0),
+                                         key="functional")
+        num_security = st.number_input("Security", min_value=0, value=st.session_state.get("security", 0),
+                                       key="security")
     with col2:
-        num_usability = st.number_input("Usability", min_value=0, value=0, key="usability")
-        num_performance = st.number_input("Performance", min_value=0, value=0, key="performance")
+        num_usability = st.number_input("Usability", min_value=0, value=st.session_state.get("usability", 0),
+                                        key="usability")
+        num_performance = st.number_input("Performance", min_value=0, value=st.session_state.get("performance", 0),
+                                          key="performance")
     with col3:
-        num_visual = st.number_input("Visual", min_value=0, value=0, key="visual")
-        num_accessibility = st.number_input("Accessibility", min_value=0, value=0, key="accessibility")
+        num_visual = st.number_input("Visual", min_value=0, value=st.session_state.get("visual", 0), key="visual")
+        num_accessibility = st.number_input("Accessibility", min_value=0,
+                                            value=st.session_state.get("accessibility", 0), key="accessibility")
 
     submit = st.button("Generate")
     reset = st.button("Reset", on_click=on_click)
