@@ -329,7 +329,7 @@ def create_prompt(num_accessibility, num_functional, num_performance, num_securi
             Focus on Behavior: Each scenario should describe actions a user takes and the expected system behavior, not just technical implementation details.
             Multiple Examples: Provide diverse examples (positive, negative, edge cases) within each scenario to thoroughly illustrate the acceptance criteria. Consider using Example tables in Gherkin.
             Clarity and Conciseness: Keep scenarios readable and focused on the essential behavior.
-            Data-Driven Approach: Where possible, parameterize scenarios to test with different data sets instead of hardcoding specific values.
+            When using Scenario Outline, ensure that the Examples table covers all relevant test cases. Also make sure that the column headers in the Examples table match the placeholders in the Scenario Outline.
 
             An example of a valid response:
 
