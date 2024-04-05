@@ -274,50 +274,85 @@ def parse_html_to_csv(html_source, keyword):
     # Step 4: Delete the rows that were marked for deletion
     df = df.drop(rows_to_drop)
 
+    # Remove all columns where all values are 'nullna'
+    columns_to_drop = [col for col in df.columns if (df[col] == 'nullna').all()]
+    df = df.drop(columns=columns_to_drop)
+
+    # Replace 'nullna' with 'null' in the 'text' column for all divs
+    df.loc[df['element_type'] == 'div', 'text'] = 'nullna'
     return df
 
 
 def create_prompt():
-    prompt = """Objective: Create XPath expressions for web elements described in text presented in CSV format, focusing on a particular keyword. This text includes columns like element type, absolute path, siblings, ID, class, text, etc.
+    prompt = """Task: Generate XPaths to locate HTML elements based on a keyword that matches an attribute value.
 
-Process:
+Input:
 
-Examine the CSV-Formatted Text: Carefully read through the CSV-formatted text, paying attention to columns relevant to XPath generation such as text, element_type, id, class, and abs_path.
+A CSV file containing the following columns:
+element_type: The type of HTML element (e.g., div, span, input, button).
+id: The element's ID attribute (if present).
+class: The element's class attribute (if present).
+abs_path: The absolute XPath of the element.
+sibling1: The absolute XPath of the first sibling of the element.
+sibling2: The absolute XPath of the second sibling of the element.
+sibling3: The absolute XPath of the third sibling of the element.
+id: The element's ID attribute (if present).
+class: The element's class attribute (if present).
+style: The element's style attribute (if present).
+title: The element's title attribute (if present).
+href:   The element's href attribute (if present).    
+target: The element's target attribute (if present).
+src:   The element's src attribute (if present).
+alt:  The element's alt attribute (if present).
+width: The element's width attribute (if present).
+height: The element's height attribute (if present).
+type: The element's type attribute (if present).
+name: The element's name attribute (if present).
+value: The element's value attribute (if present).
+text: The text content of the element.
 
-Keyword Matching Approach: Identify elements where the text attribute aligns with the given keyword, following a structured approach:
+Keyword Matching Strategy:
 
-Exact Match: First, find elements whose text attribute exactly matches the keyword. If there are more than one such elements create xpath for all of them.
-Case-Insensitive Match: If no exact match is found, look for a case-insensitive match.
-Partial String Match: Next, identify elements that contain the keyword as part of their text and be case insensitive.
-XPath Construction Strategy: Depending on the type of match, construct the XPath:
+Do not take into account nullna values while creating XPaths.
+Prioritize Reliability: Give preference to XPath expressions that are the most likely to be unique and stable across potential website changes.
+Exact Matches: Begin by searching for elements where the keyword matches the entire value of an attribute:
+id: If a matching 'id' exists, it's the most reliable choice: //*[@id='keyword']
+Other Attributes: Look for exact matches on attributes like 'name', 'class', etc.: //element_type[@attribute='keyword']
+Case-Insensitive Matches: If no exact matches are found:
+translate(): Use the translate() function to make comparisons case-insensitive: //element_type[translate(@attribute, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'keyword']
+Partial Matches with Contains: When case-insensitive exact matches fail, look for partial matches:
+contains(): Utilize the contains() function: //element_type[contains(@attribute, 'keyword')]
+Specificity: Balance between finding matches and avoiding overly broad results.
+Text Content Matching: Consider text content for matching if appropriate:
+text(): For simple matches: //element_type[text()='keyword']
+Case Sensitivity: Employ translate() for case-insensitive text matches.
+Contextual XPath Generation:
 
-Direct Text Match: Use text() for elements with an exact text match.Ignore other attributes. xpath will be //element_type[text()='keyword']
-Example: For a button with text "Submit", XPath: //button[text()='Submit']
-Case-Insensitive or Contains Match: Utilize functions like contains() or translate() for partial case-insensitive matches.
-Example: For "submit" case-insensitively in a div: XPath: //div[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'submit')]
-Attribute-Based Approach: When text matching isn't ideal, rely on attributes like id or class.
-Example: Element with id="loginBtn": XPath: //*[@id='loginBtn']
-Utilizing Absolute Path: Use abs_path for more specific targeting when other methods fall short.
-Example: Absolute path XPath: /html/body/div[1]/section/div[3]/button
-Documentation of XPath Expressions: List the generated XPath expressions, categorizing them by the match type (Exact, Case-Insensitive, etc.).
+Attribute Availability: If multiple matching attributes exist, prioritize the most reliable ones (usually 'id' > 'class' > 'name').
+Absolute Paths: While 'abs_path' can be specific, try to construct XPaths that are more resilient to minor structural website changes. Only use abs_path in exceptional cases for precise targeting, as it can be brittle to changes in the HTML structure.
+Specificity: Aim for XPaths that are specific enough to match the target element but not overly specific so as to become brittle.
 
-Output: Provide a clear presentation of the XPath expressions, indicating the match type for each.
+Output:
+Clearly Formatted: Present the generated XPath expressions in a well-organized manner
+Match Type: Indicate the matching strategy used for each XPath (e.g., Exact ID Match, Case-Insensitive Attribute, Partial Text Contains).
+Additional Notes: If necessary, include comments for complex XPaths or to explain decisions made.
+Clearly present the generated XPaths.
+Indicate the match type: "Exact", "Case-Insensitive", "Partial", or "Absolute Path".
 
 Example Scenarios:
 
 Keyword: "My learning"
-csv row to select for creating xpath is:
-df_primary_key,element_type,abs_path,sibling1,sibling2,sibling3,id,class,style,title,tabindex,for,href,target,rel,src,alt,width,height,type,name,value,placeholder,role,aria-label,aria-describedby,autocomplete,aria-hidden,text
-911,span,/html/body/div/div/div/div/div/div/div/a/span,nullna,nullna,nullna,nullna,nullna,nullna,nullna,nullna,nullna,nullna,nullna,nullna,nullna,nullna,nullna,nullna,nullna,nullna,nullna,nullna,nullna,nullna,nullna,nullna,nullna,My learning
-XPath for the above row is: //span[text()='My learning'] 
-The reason is that the text attribute of the span element exactly matches the keyword "My learning".
 
-Keyword: "Register"
-Exact Text Match: XPath for a link element with text "Register": //a[text()='Register']
-Case-Insensitive Match: XPath for a span with "register" (case-insensitive): //span[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'register')]
-Case-Insensitive Partial Match: XPath for a div containing "reg": //div[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'reg')]
+CSV row: element_type=span, text=My learning
+XPath: //span[text()='My learning']
+Reason: The text attribute of the span element is an exact match for "My learning".
+Keyword: "username"
+Relevant CSV rows include elements with various attributes.
+For exact text match: Use XPath for elements where name='username', e.g., //input[@name='username'].
+For case-insensitive match: For example, XPath for a case-insensitive match of name='username' is //input[translate(@name, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'username'].
+For partial match: XPath for elements containing "user", e.g., //input[contains(@name, 'user')].
 
-This manual approach requires a detailed review of the CSV-formatted text to determine the most effective XPath based on element attributes and the nature of the keyword match."""
+"""
 
     return prompt
 
