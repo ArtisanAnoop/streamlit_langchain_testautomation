@@ -314,6 +314,7 @@ text: The text content of the element.
 Keyword Matching Strategy:
 
 Do not take into account nullna values while creating XPaths.
+While generating XPaths, consider the following attributes in the order of priority: 'id', 'class', 'name', 'href', 'text' etc
 Prioritize Reliability: Give preference to XPath expressions that are the most likely to be unique and stable across potential website changes.
 Exact Matches: Begin by searching for elements where the keyword matches the entire value of an attribute:
 id: If a matching 'id' exists, it's the most reliable choice: //*[@id='keyword']
