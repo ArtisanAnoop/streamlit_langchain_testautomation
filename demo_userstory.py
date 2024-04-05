@@ -183,6 +183,21 @@ def main():
         "The system should allow me to prioritize the scheduling of courses based on the availability of rooms.\n" +
         "The system should prevent me from scheduling a course in a room that is already booked for the entire day.")
 
+
+    # Initialize the session state for your widgets if it's not already set
+    if 'functional' not in st.session_state:
+        st.session_state['functional'] = 0
+    if 'security' not in st.session_state:
+        st.session_state['security'] = 0
+    if 'usability' not in st.session_state:
+        st.session_state['usability'] = 0
+    if 'performance' not in st.session_state:
+        st.session_state['performance'] = 0
+    if 'visual' not in st.session_state:
+        st.session_state['visual'] = 0
+    if 'accessibility' not in st.session_state:
+        st.session_state['accessibility'] = 0
+
     st.write("\n\n\n")
     st.write("\n\n\n")
 
@@ -191,19 +206,17 @@ def main():
                               key="user_story")
     col1, col2, col3 = st.columns([10, 10, 10])
     with col1:
-        num_functional = st.number_input("Functional", min_value=0, value=st.session_state.get("functional", 0),
+        num_functional = st.number_input("Functional", min_value=0, value=st.session_state['functional'],
                                          key="functional")
-        num_security = st.number_input("Security", min_value=0, value=st.session_state.get("security", 0),
-                                       key="security")
+        num_security = st.number_input("Security", min_value=0, value=st.session_state['security'], key="security")
     with col2:
-        num_usability = st.number_input("Usability", min_value=0, value=st.session_state.get("usability", 0),
-                                        key="usability")
-        num_performance = st.number_input("Performance", min_value=0, value=st.session_state.get("performance", 0),
+        num_usability = st.number_input("Usability", min_value=0, value=st.session_state['usability'], key="usability")
+        num_performance = st.number_input("Performance", min_value=0, value=st.session_state['performance'],
                                           key="performance")
     with col3:
-        num_visual = st.number_input("Visual", min_value=0, value=st.session_state.get("visual", 0), key="visual")
-        num_accessibility = st.number_input("Accessibility", min_value=0,
-                                            value=st.session_state.get("accessibility", 0), key="accessibility")
+        num_visual = st.number_input("Visual", min_value=0, value=st.session_state['visual'], key="visual")
+        num_accessibility = st.number_input("Accessibility", min_value=0, value=st.session_state['accessibility'],
+                                            key="accessibility")
 
     submit = st.button("Generate")
     reset = st.button("Reset", on_click=on_click)
